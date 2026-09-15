@@ -1,3 +1,38 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VidsSave - Free Video Downloader</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
+    body { background: #0f172a; color: #fff; padding: 20px; display: flex; justify-content: center; }
+    .card { background: #1e293b; width: 100%; max-width: 480px; padding: 25px; border-radius: 12px; margin-top: 25px; text-align: center; }
+    h2 { color: #38bdf8; margin-bottom: 8px; }
+    p { color: #94a3b8; font-size: 14px; margin-bottom: 20px; }
+    input { width: 100%; padding: 13px; border-radius: 8px; border: 1px solid #334155; background: #0f172a; color: #fff; font-size: 15px; margin-bottom: 12px; }
+    button { width: 100%; padding: 13px; background: #38bdf8; color: #000; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; }
+    #status { margin-top: 15px; font-size: 14px; color: #fbbf24; word-break: break-word; }
+    #result { margin-top: 20px; display: none; }
+    .dl-btn { display: inline-block; width: 100%; padding: 13px; background: #22c55e; color: #fff; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px; }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <h2>VidsSave Video Downloader</h2>
+  <p>Paste Instagram link below</p>
+
+  <input type="text" id="videoUrl" placeholder="Paste link here..." />
+  <button onclick="downloadVideo()">Get Video</button>
+
+  <div id="status"></div>
+
+  <div id="result">
+    <a id="finalLink" class="dl-btn" href="#" target="_blank">Download MP4</a>
+  </div>
+</div>
+
 <script>
   async function downloadVideo() {
     const inputUrl = document.getElementById('videoUrl').value.trim();
@@ -16,7 +51,6 @@
     const apiKey = "30728598e5mshfa9a36c68c7f7d6p11d81cjsn24ccfbe20e38";
     const apiHost = "instagram-downloader-download-instagram-videos-stories1.p.rapidapi.com";
 
-    // Format clean URL
     const requestUrl = `https://${apiHost}/get-info?url=${encodeURIComponent(inputUrl)}`;
 
     try {
@@ -31,7 +65,6 @@
       const data = await response.json();
       console.log(data);
 
-      // Har format se download URL nikalne ki koshish
       let downloadUrl = data.download_url || data.url || data.media || (data.data && data.data[0] ? (data.data[0].url || data.data[0].download_url) : null);
 
       if (downloadUrl) {
@@ -41,11 +74,14 @@
       } else if (data.message) {
         status.innerText = "API Notice: " + data.message;
       } else {
-        status.innerText = "API Response error. Kripya dusra link try karein.";
+        status.innerText = "Video link nahi mila. Kripya dusra reel try karein.";
       }
     } catch (err) {
-      status.innerText = "Connection error. Internet ya RapidAPI limit check karein.";
+      status.innerText = "Connection error. Internet ya API check karein.";
       console.error(err);
     }
   }
 </script>
+
+</body>
+</html>
