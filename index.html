@@ -4,6 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>VidsSave - Free Video Downloader</title>
+
+  <!-- Adsterra Social Bar Ad Script -->
+  <script src="https://pl31348471.profitableratecpmnetwork.com/42/30/87/4230879bd7519ec45abdc677f5d9b544.js"></script>
+
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
     body { background: #0f172a; color: #fff; padding: 20px; display: flex; justify-content: center; min-height: 100vh; }
@@ -11,7 +15,8 @@
     h2 { color: #38bdf8; margin-bottom: 8px; }
     p { color: #94a3b8; font-size: 14px; margin-bottom: 20px; }
     input { width: 100%; padding: 13px; border-radius: 8px; border: 1px solid #334155; background: #0f172a; color: #fff; font-size: 15px; margin-bottom: 12px; }
-    button { width: 100%; padding: 13px; background: #38bdf8; color: #000; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; }
+    button { width: 100%; padding: 13px; background: #38bdf8; color: #000; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; transition: 0.2s; }
+    button:active { transform: scale(0.98); }
     #status { margin-top: 15px; font-size: 14px; color: #fbbf24; word-break: break-word; }
     #result { margin-top: 20px; display: none; }
     .dl-btn { display: inline-block; width: 100%; padding: 13px; background: #22c55e; color: #fff; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px; }
@@ -54,7 +59,6 @@
     }
 
     try {
-      // Direct Instagram JSON fetch through CORS proxy
       const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(inputUrl + '?__a=1&__d=dis');
       const response = await fetch(proxyUrl);
       const data = await response.json();
@@ -72,12 +76,10 @@
         finalLink.href = videoUrl;
         resultBox.style.display = "block";
       } else {
-        // Fallback open server without DNS blocks
         status.innerText = "Server par bheja ja raha hai...";
         window.open('https://fastdl.app/en?url=' + encodeURIComponent(inputUrl), '_blank');
       }
     } catch (e) {
-      // FastDL server fallback
       status.innerText = "Download page open ho raha hai...";
       window.open('https://fastdl.app/en?url=' + encodeURIComponent(inputUrl), '_blank');
     }
