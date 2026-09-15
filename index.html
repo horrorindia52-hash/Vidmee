@@ -11,8 +11,7 @@
     h2 { color: #38bdf8; margin-bottom: 8px; }
     p { color: #94a3b8; font-size: 14px; margin-bottom: 20px; }
     input { width: 100%; padding: 13px; border-radius: 8px; border: 1px solid #334155; background: #0f172a; color: #fff; font-size: 15px; margin-bottom: 12px; }
-    button { width: 100%; padding: 13px; background: #38bdf8; color: #000; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; transition: 0.2s; }
-    button:active { transform: scale(0.98); }
+    button { width: 100%; padding: 13px; background: #38bdf8; color: #000; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; }
     #status { margin-top: 15px; font-size: 14px; color: #fbbf24; word-break: break-word; }
     #result { margin-top: 20px; display: none; }
     .dl-btn { display: inline-block; width: 100%; padding: 13px; background: #22c55e; color: #fff; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px; }
@@ -30,7 +29,7 @@
   <div id="status"></div>
 
   <div id="result">
-    <a id="finalLink" class="dl-btn" href="#" target="_blank" download>Download Video</a>
+    <a id="finalLink" class="dl-btn" href="#" target="_blank" rel="noopener noreferrer">Download Video</a>
   </div>
 </div>
 
@@ -46,36 +45,41 @@
       return;
     }
 
-    inputUrl = inputUrl.split('?')[0];
-    status.innerText = "Video fetch ho rahi hai... kripya intezar karein";
+    status.innerText = "Video dhoondi ja rahi hai...";
     resultBox.style.display = "none";
 
+    inputUrl = inputUrl.split('?')[0];
+    if (!inputUrl.endsWith('/')) {
+      inputUrl += '/';
+    }
+
     try {
-      // Direct fast unblocked API instance
-      const res = await fetch("https://cobalt-api.kwiatekm.tokyo/", {
-        method: "POST",
-        headers: {
-          "Accept": "application/json",
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          url: inputUrl,
-          videoQuality: "720"
-        })
-      });
+      // Direct Instagram JSON fetch through CORS proxy
+      const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(inputUrl + '?__a=1&__d=dis');
+      const response = await fetch(proxyUrl);
+      const data = await response.json();
 
-      const data = await res.json();
+      let videoUrl = null;
+      if (data.graphql && data.graphql.shortcode_media) {
+        videoUrl = data.graphql.shortcode_media.video_url;
+      } else if (data.items && data.items[0]) {
+        const item = data.items[0];
+        videoUrl = item.video_versions ? item.video_versions[0].url : null;
+      }
 
-      if (data.url) {
-        status.innerText = "Video ready!";
-        finalLink.href = data.url;
+      if (videoUrl) {
+        status.innerText = "Video mil gayi!";
+        finalLink.href = videoUrl;
         resultBox.style.display = "block";
       } else {
-        status.innerText = "Video load nahi hui. Ek baar check karein reel public hai ya nahi.";
+        // Fallback open server without DNS blocks
+        status.innerText = "Server par bheja ja raha hai...";
+        window.open('https://fastdl.app/en?url=' + encodeURIComponent(inputUrl), '_blank');
       }
-    } catch (err) {
-      status.innerText = "Server busy hai, kripya 10 second baad dobara Get Video dabayein.";
-      console.error(err);
+    } catch (e) {
+      // FastDL server fallback
+      status.innerText = "Download page open ho raha hai...";
+      window.open('https://fastdl.app/en?url=' + encodeURIComponent(inputUrl), '_blank');
     }
   }
 </script>
