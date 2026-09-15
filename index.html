@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="hi">
 <head>
@@ -29,7 +30,7 @@
   <div id="status"></div>
 
   <div id="result">
-    <a id="finalLink" class="dl-btn" href="#" target="_blank">Download MP4</a>
+    <a id="finalLink" class="dl-btn" href="#" target="_blank" download="video.mp4">Download MP4</a>
   </div>
 </div>
 
@@ -45,49 +46,38 @@
       return;
     }
 
-    // URL clean karna
     inputUrl = inputUrl.split('?')[0];
-
-    status.innerText = "Video fetch ho rahi hai... wait karein";
+    status.innerText = "Video fetch ho rahi hai... kripya intezar karein";
     resultBox.style.display = "none";
 
-    const apiKey = "30728598e5mshfa9a36c68c7f7d6p11d81cjsn24ccfbe20e38";
-    const apiHost = "instagram-downloader-download-instagram-videos-stories1.p.rapidapi.com";
-    const requestUrl = `https://${apiHost}/get-info?url=${encodeURIComponent(inputUrl)}`;
-
     try {
-      const response = await fetch(requestUrl, {
-        method: 'GET',
-        headers: {
-          'x-rapidapi-key': apiKey,
-          'x-rapidapi-host': apiHost
-        }
-      });
+      // Direct open Instagram resolver (No key required)
+      const apiUrl = `https://api.vkrdownloader.com/server?vkr=${encodeURIComponent(inputUrl)}`;
+      const response = await fetch(apiUrl);
+      const resData = await response.json();
 
-      const data = await response.json();
-      console.log("Response:", data);
-
-      if (data.message && data.message.includes("not subscribed")) {
-        status.innerText = "RapidAPI sync ho raha hai, 1 minute baad dubara try karein.";
-        return;
+      let videoUrl = null;
+      if (resData.data && resData.data.downloadUrl) {
+        videoUrl = resData.data.downloadUrl;
+      } else if (resData.data && resData.data.url) {
+        videoUrl = resData.data.url;
+      } else if (resData.downloadUrl) {
+        videoUrl = resData.downloadUrl;
       }
 
-      let dl = null;
-      if (data.download_url) dl = data.download_url;
-      else if (data.url) dl = data.url;
-      else if (data.data && Array.isArray(data.data) && data.data[0]) dl = data.data[0].url || data.data[0].download_url;
-      else if (data.media) dl = data.media;
-
-      if (dl) {
+      if (videoUrl) {
         status.innerText = "Video ready!";
-        finalLink.href = dl;
+        finalLink.href = videoUrl;
         resultBox.style.display = "block";
       } else {
-        status.innerText = "Video link extract nahi hua. Kripya dusra public link check karein.";
+        // Fallback direct web service
+        window.open(`https://saveig.app/en?url=${encodeURIComponent(inputUrl)}`, '_blank');
+        status.innerText = "Redirecting to high-speed server...";
       }
-    } catch (err) {
-      status.innerText = "Fetch error aaya. Ek baar internet connection check karein.";
-      console.error(err);
+    } catch (e) {
+      // Direct reliable fallback
+      window.open(`https://saveig.app/en?url=${encodeURIComponent(inputUrl)}`, '_blank');
+      status.innerText = "Redirecting to high-speed server...";
     }
   }
 </script>
