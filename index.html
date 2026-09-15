@@ -13,7 +13,9 @@
     input { width: 100%; padding: 13px; border-radius: 8px; border: 1px solid #334155; background: #0f172a; color: #fff; font-size: 15px; margin-bottom: 12px; }
     button { width: 100%; padding: 13px; background: #38bdf8; color: #000; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; transition: 0.2s; }
     button:active { transform: scale(0.98); }
-    #status { margin-top: 15px; font-size: 14px; color: #fbbf24; }
+    #status { margin-top: 15px; font-size: 14px; color: #fbbf24; word-break: break-word; }
+    #result { margin-top: 20px; display: none; }
+    .dl-btn { display: inline-block; width: 100%; padding: 13px; background: #22c55e; color: #fff; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px; }
   </style>
 </head>
 <body>
@@ -26,28 +28,55 @@
   <button onclick="downloadVideo()">Get Video</button>
 
   <div id="status"></div>
+
+  <div id="result">
+    <a id="finalLink" class="dl-btn" href="#" target="_blank" download>Download Video</a>
+  </div>
 </div>
 
 <script>
-  function downloadVideo() {
+  async function downloadVideo() {
     let inputUrl = document.getElementById('videoUrl').value.trim();
     const status = document.getElementById('status');
+    const resultBox = document.getElementById('result');
+    const finalLink = document.getElementById('finalLink');
 
     if (!inputUrl) {
-      alert("Pehle Instagram reel link paste karein!");
+      alert("Pehle reel link paste karein!");
       return;
     }
 
-    status.innerText = "Video server open ho raha hai...";
     inputUrl = inputUrl.split('?')[0];
+    status.innerText = "Video fetch ho rahi hai... kripya intezar karein";
+    resultBox.style.display = "none";
 
-    // India me permanently active server
-    const targetUrl = "https://en.savefrom.net/393GA/#url=" + encodeURIComponent(inputUrl);
+    try {
+      // Direct fast unblocked API instance
+      const res = await fetch("https://cobalt-api.kwiatekm.tokyo/", {
+        method: "POST",
+        headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          url: inputUrl,
+          videoQuality: "720"
+        })
+      });
 
-    setTimeout(() => {
-      window.open(targetUrl, '_blank');
-      status.innerText = "Server naye tab me open ho gaya hai!";
-    }, 300);
+      const data = await res.json();
+
+      if (data.url) {
+        status.innerText = "Video ready!";
+        finalLink.href = data.url;
+        resultBox.style.display = "block";
+      } else {
+        status.innerText = "Video load nahi hui. Ek baar check karein reel public hai ya nahi.";
+      }
+    } catch (err) {
+      status.innerText = "Server busy hai, kripya 10 second baad dobara Get Video dabayein.";
+      console.error(err);
+    }
   }
 </script>
 
