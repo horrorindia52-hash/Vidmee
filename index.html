@@ -11,7 +11,8 @@
     h2 { color: #38bdf8; margin-bottom: 8px; }
     p { color: #94a3b8; font-size: 14px; margin-bottom: 20px; }
     input { width: 100%; padding: 13px; border-radius: 8px; border: 1px solid #334155; background: #0f172a; color: #fff; font-size: 15px; margin-bottom: 12px; }
-    button { width: 100%; padding: 13px; background: #38bdf8; color: #000; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; }
+    button { width: 100%; padding: 13px; background: #38bdf8; color: #000; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; transition: 0.2s; }
+    button:active { transform: scale(0.98); }
     #status { margin-top: 15px; font-size: 14px; color: #fbbf24; }
   </style>
 </head>
@@ -37,16 +38,18 @@
       return;
     }
 
-    status.innerText = "Video download server khul raha hai...";
+    status.innerText = "Video server open ho raha hai...";
     inputUrl = inputUrl.split('?')[0];
 
+    // India me permanently active server
+    const targetUrl = "https://en.savefrom.net/393GA/#url=" + encodeURIComponent(inputUrl);
+
     setTimeout(() => {
-      window.location.href = `https://snapinsta.app/en?url=${encodeURIComponent(inputUrl)}`;
-    }, 400);
+      window.open(targetUrl, '_blank');
+      status.innerText = "Server naye tab me open ho gaya hai!";
+    }, 300);
   }
 </script>
 
-</body>
-</html>
 </body>
 </html>
